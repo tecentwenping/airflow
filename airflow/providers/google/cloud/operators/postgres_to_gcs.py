@@ -24,8 +24,6 @@ import json
 import time
 from decimal import Decimal
 
-import pendulum
-
 from airflow.providers.google.cloud.operators.sql_to_gcs import BaseSQLToGCSOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.decorators import apply_defaults
@@ -90,7 +88,7 @@ class PostgresToGCSOperator(BaseSQLToGCSOperator):
         Decimals are converted to floats. Times are converted to seconds.
         """
         if isinstance(value, (datetime.datetime, datetime.date)):
-            return pendulum.parse(value.isoformat()).float_timestamp
+            return time.mktime(value.timetuple())
         if isinstance(value, datetime.time):
             formated_time = time.strptime(str(value), "%H:%M:%S")
             return int(datetime.timedelta(
